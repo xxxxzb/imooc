@@ -38,7 +38,7 @@ public interface BusinessDao {
      */
 	List<Business> selectLikeByPage(Business business);
 	
-	
+	int update(Business business);
 	
 	int delete(Long id);
 	

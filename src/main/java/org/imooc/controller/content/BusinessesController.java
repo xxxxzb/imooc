@@ -7,6 +7,7 @@ import org.imooc.dao.BusinessDao;
 import org.imooc.dto.BusinessDto;
 import org.imooc.service.content.BusinessService;
 import org.imooc.service.content.DicService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -83,9 +84,27 @@ public class BusinessesController {
 	/**
 	 * 商户修改
 	 */
-	@RequestMapping(value="/{id}",method=RequestMethod.PUT)
+	/*@RequestMapping(value="/{id}",method=RequestMethod.PUT)
 	public String modify(@PathVariable("id")Long id,Model model){
-		
-		return "/content/businessModify";
+		BusinessDto businessDto = new BusinessDto();
+		BeanUtils.copyProperties(businessService.seachById(id), businessDto);
+		if(businessService.modify(businessDto)){
+			model.addAttribute(PageCodeEnum.KEY, PageCodeEnum.MODIFY_SUCCESS);
+			return "redirect:/businesses";
+		}else{
+			model.addAttribute(PageCodeEnum.KEY, PageCodeEnum.MODIFY_FAIL);
+			return "redirect:/businesses/id";
+		}
+	}*/
+	@RequestMapping(value="/{id}",method=RequestMethod.PUT)
+	public String modify(BusinessDto businessDto,Model model){
+		model.addAttribute("modifyObj", businessDto);
+		if(businessService.modify(businessDto)){
+			model.addAttribute(PageCodeEnum.KEY, PageCodeEnum.MODIFY_SUCCESS);
+			return "redirect:/businesses";
+		}else{
+			model.addAttribute(PageCodeEnum.KEY, PageCodeEnum.MODIFY_FAIL);
+			return "redirect:/businesses/id";
+		}
 	}
 }

@@ -64,6 +64,57 @@
 		</where>
 		order by id
 	</select>
+	
+	<select id="selectLikeByPage" resultType="Business">
+		select id,img_file_name,title,subtitle,price,distance,number,`desc`,city,category,star_total_num,comment_total_num 
+		from business
+		<where>
+			<if test="title!=null and title!='' 
+			and subtitle!=null and subtitle!='' 
+			and desc!=null and desc!=''">
+				and (title like '%' #{title} '%' or subtitle like '%' #{subtitle} '%' 
+				or `desc` like '%' #{desc} '%')
+			</if>
+			<if test="city != null and city!= ''">
+				and city = #{city}
+			</if>
+			<if test="category != null and category != ''">
+				and category = #{category}
+			</if>
+		</where>
+		order by id 
+	</select>
+	
+	<update id="update">
+		update business
+		<set>
+			<if test="imgFileName != null">
+				img_file_name = #{imgFileName},
+			</if>
+			<if test="title != null">
+				title = #{title},
+			</if>
+			<if test="subtitle !=null">
+				subtitle = #{subtitle},
+			</if>
+			<if test="city != null">
+				city = #{city},
+			</if>
+			<if test="category != null">
+				category = #{category},
+			</if>
+			<if test="distance !=null">
+				distance = #{distance},
+			</if>
+			<if test="price !=null">
+				price= #{price},
+			</if>
+			<if test="desc !=null">
+				`desc` = #{desc},
+			</if>		
+		</set>
+		 where id =#{id}
+	</update>
 
 	<delete id="delete">
 		delete from business where id=#{_parameter}
