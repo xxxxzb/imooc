@@ -12,6 +12,7 @@ import org.imooc.bean.BusinessList;
 import org.imooc.bean.Comment;
 import org.imooc.bean.Orders;
 import org.imooc.bean.Page;
+import org.imooc.constant.ApiCodeEnum;
 import org.imooc.controller.content.BusinessesController;
 import org.imooc.dto.AdDto;
 import org.imooc.dto.ApiCodeDto;
@@ -220,15 +221,26 @@ public class ApiController {
 	 */
 	@RequestMapping(value="/sms",method=RequestMethod.POST)
 	public ApiCodeDto sms(@RequestParam("username")Long username){
-		
+		ApiCodeDto dto;
 		//1、验证手机号是否被注册过（是否存在）
 		if(memberService.exists(username)){
 			//2、生成6位随机数
 			String code = String.valueOf(CommonUtil.random(6));
 			
 			//3、保存手机号与对应的md5（6位随机数）（一般保存1分钟，之后就失效）
-			memberService
+			if(memberService.saveCode(username, code)) {
+				//4、调用短信通道，发送明文6位数到对应手机上
+				if(memberService.sendCode(username, code)){
+					dto = new ApiCodeDto(ApiCodeEnum.SUCCESS.getErrno(),code);					
+				}else {
+					dto = new ApiCodeDto(ApiCodeEnum.SEND_FAIL);
+				}
+			}else {
+				dto = new ApiCodeDto(ApiCodeEnum.REPEAT_REQUEST);
+			}
+		}else {
+			dto = new ApiCodeDto(ApiCodeEnum.USER_NO_EXISTS);
 		}
-		return null;
+		return dto;
 	}
 }

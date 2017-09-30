@@ -10,4 +10,12 @@ public interface MemberService {
 	 * 保存手机号和对应的MD5码到缓存中
 	 */
 	boolean saveCode(Long phone,String code);
+	
+	 /**
+     * 下发短信验证码
+     * @param phone 手机号
+     * @param content 验证码
+     * @return 是否发送成功：true：发送成功，false：发送失败
+     */
+	boolean sendCode(Long phone,String content);
 }
