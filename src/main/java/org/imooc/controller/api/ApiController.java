@@ -181,40 +181,6 @@ public class ApiController {
 		return result;
 	}
 	
-	/**
-	 * 登录
-	 * @throws IOException 
-	 * @throws JsonMappingException 
-	 * @throws JsonParseException 
-	 */
-	@ResponseBody
-	@RequestMapping(value="/login",method=RequestMethod.POST)
-	public Map<String,Object> login() {
-		Map<String,Object> result=new HashMap<String,Object>();
-		result.put("errno", 0);
-		result.put("msg", "loing ok");
-		result.put("token", "aaaaaaaaaaaa");
-		return result;
-	}
-	
-	
-	
-	/**
-	 * 获取短信验证码
-	 * @throws IOException 
-	 * @throws JsonMappingException 
-	 * @throws JsonParseException 
-	 *//*
-	@ResponseBody
-	@RequestMapping(value="/sms",method=RequestMethod.POST)
-	public Map<String,Object> sms() {
-		Map<String,Object> result=new HashMap<String,Object>();
-		result.put("errno", 0);
-		result.put("msg", "loing ok");
-		result.put("code", "md5(123456)");
-		return result;
-	}
-*/
 	
 	/**
 	 * 根据手机号 下发短信验证码
@@ -242,5 +208,32 @@ public class ApiController {
 			dto = new ApiCodeDto(ApiCodeEnum.USER_NO_EXISTS);
 		}
 		return dto;
+	}
+	
+	/**
+	 * 会员登录
+	 */
+	@RequestMapping(value="/login",method=RequestMethod.POST)
+	public ApiCodeDto login(@RequestParam("username")Long username,@RequestParam("code")String code){
+		ApiCodeDto dto;
+		// 1、用手机号取出保存的md5(6位随机数)，能取到，并且与提交上来的code值相同为校验通过
+		if(memberService.getCode(username)!=null){
+			if(memberService.getCode(username).equals(code)){
+		// 2、如果校验通过，生成一个32位的token
+				String token = CommonUtil.getUUID();
+		// 3、保存手机号与对应的token（一般这个手机号中途没有与服务端交互的情况下，保持10分钟）
+				memberService.saveToken(token, username);
+		// 4、将这个token返回给前端
+				dto = new ApiCodeDto(ApiCodeEnum.SUCCESS);
+				dto.setToken(token);
+			}else{
+					dto = new ApiCodeDto(ApiCodeEnum.CODE_ERROR);
+			}
+		}else{
+			dto = new ApiCodeDto(ApiCodeEnum.CODE_INVALID);
+		}
+		
+		return dto;
+		
 	}
 }

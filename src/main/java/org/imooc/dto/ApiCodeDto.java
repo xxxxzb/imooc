@@ -15,9 +15,9 @@ public class ApiCodeDto {
 	
 	public ApiCodeDto() {}
 
-	public ApiCodeDto(Integer errno, String msg) {
+	public ApiCodeDto(Integer errno, String code) {
 		this.errno = errno;
-		this.msg = msg;
+		this.code = code;
 	}
 	
 	public ApiCodeDto(ApiCodeEnum apiCodeEnum){

@@ -3,6 +3,7 @@ package org.imooc.service.impl;
 import java.util.List;
 import org.imooc.bean.Member;
 import org.imooc.cache.CodeCache;
+import org.imooc.cache.TokenCache;
 import org.imooc.dao.MemberDao;
 import org.imooc.service.content.MemberService;
 import org.imooc.util.MD5Util;
@@ -30,7 +31,12 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public boolean saveCode(Long phone, String code) {
-		//TODO 真实环境中，用redis去实现
+		//TODO 真实环境中，问题1可以用redis去实现
+		/*实际环境中，需处理3个问题：
+		1、集群服务器中，如何保证每次请求都是同一台服务器
+		2、如何挡住重复请求
+		3、实现token时效性（如：保持10分钟 然后失效）*/
+		
 		CodeCache codeCache= CodeCache.getInstance();
 		return codeCache.save(phone, MD5Util.getMD5(code));
 	}
@@ -39,6 +45,18 @@ public class MemberServiceImpl implements MemberService {
 	public boolean sendCode(Long phone, String content) {
 		logger.info(phone+"|"+content);
 		return true;
+	}
+
+	@Override
+	public String getCode(Long phone) {
+		CodeCache codeCache= CodeCache.getInstance();
+		return codeCache.getCode(phone);
+	}
+
+	@Override
+	public void saveToken(String token,Long phone) {
+		TokenCache tokenCache = TokenCache.getInstance();
+		tokenCache.saveToken(token, phone);
 	}
 
 }

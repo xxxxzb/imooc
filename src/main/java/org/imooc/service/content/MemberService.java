@@ -18,4 +18,16 @@ public interface MemberService {
      * @return 是否发送成功：true：发送成功，false：发送失败
      */
 	boolean sendCode(Long phone,String content);
+	
+	/**
+     * 根据手机号获取验证码的MD5码值
+     * @param phone 手机号
+     * @return 验证码的MD5码值
+     */
+    String getCode(Long phone);
+    
+    /**
+	 * 保存手机号和token到缓存中
+	 */
+	void saveToken(String token,Long phone);
 }

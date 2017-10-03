@@ -1,0 +1,43 @@
+package org.imooc.cache;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class TokenCache {
+	private static TokenCache instance;
+	private Map<String,Long> tokenMap;
+	
+	private TokenCache(){
+		tokenMap=new HashMap<>();
+	}
+	
+	public static TokenCache getInstance(){
+		if(instance==null){
+			synchronized (TokenCache.class) {
+				if(instance==null){
+					instance = new TokenCache();
+				}
+			}
+		}
+		return instance;
+	}
+	
+	/**
+     * 保存token与对应的手机号
+     * @param token
+     * @param phone 手机号
+	 * @return 
+     */
+	public void saveToken(String token,Long phone){
+		tokenMap.put(token, phone);
+	}
+
+	 /**
+     * 根据token获取用户信息(手机号)
+     * @param token
+     * @return 手机号
+     */
+	public Long getToken(String token){
+		return tokenMap.get(token);
+	}
+}
