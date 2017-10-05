@@ -58,5 +58,20 @@ public class MemberServiceImpl implements MemberService {
 		TokenCache tokenCache = TokenCache.getInstance();
 		tokenCache.saveToken(token, phone);
 	}
+	
+	public Long getPhone(String token) {
+		TokenCache tokenCache = TokenCache.getInstance();
+		return tokenCache.getToken(token);
+	}
+	
+	public Long getIdByPhone(Long phone) {
+		Member member = new Member();
+		member.setPhone(phone);
+		List<Member>list = memberDao.select(member);
+		if(list!=null &&list.size()==1) {
+			return list.get(0).getId();
+		}
+		return null;
+	}
 
 }

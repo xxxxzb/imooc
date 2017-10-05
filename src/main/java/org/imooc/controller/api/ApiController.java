@@ -18,6 +18,8 @@ import org.imooc.dto.AdDto;
 import org.imooc.dto.ApiCodeDto;
 import org.imooc.dto.BusinessDto;
 import org.imooc.dto.BusinessListDto;
+import org.imooc.dto.OrderForBuyDto;
+import org.imooc.dto.OrdersDto;
 import org.imooc.service.content.AdService;
 import org.imooc.service.content.BusinessService;
 import org.imooc.service.content.MemberService;
@@ -30,13 +32,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Controller
+@RestController
 @RequestMapping("/api")
 public class ApiController {
 	
@@ -64,7 +67,6 @@ public class ApiController {
 	 * @throws JsonMappingException 
 	 * @throws JsonParseException 
 	 */
-	@ResponseBody
 	@RequestMapping(value="/homead",method=RequestMethod.GET)
 	public List<AdDto> homead(){
 		AdDto adDto = new AdDto();
@@ -78,7 +80,6 @@ public class ApiController {
 	 * @throws JsonMappingException 
 	 * @throws JsonParseException 
 	 */
-	@ResponseBody
 	@RequestMapping(value="/homelist/{city}/{page}",method=RequestMethod.GET)
 	public BusinessListDto homelist() {
 		BusinessDto businessDto = new BusinessDto();
@@ -105,7 +106,6 @@ public class ApiController {
 	 * @throws JsonMappingException 
 	 * @throws JsonParseException 
 	 */
-	@ResponseBody
 	@RequestMapping(value="/search/{page}/{city}/{category}",method=RequestMethod.GET)
 	public BusinessListDto searchByTwo(BusinessDto businessDto){
 		businessDto.getPage().setPageNumber(businessSearchNumber);
@@ -118,7 +118,6 @@ public class ApiController {
 	 * @throws JsonMappingException 
 	 * @throws JsonParseException 
 	 */
-	@ResponseBody
 	@RequestMapping(value="/detail/info/{id}",method=RequestMethod.GET)
 	public BusinessDto detailInfo(@PathVariable("id")Long id){
 		return businessService.seachById(id);
@@ -130,7 +129,6 @@ public class ApiController {
 	 * @throws JsonMappingException 
 	 * @throws JsonParseException 
 	 */
-	@ResponseBody
 	@RequestMapping(value="/detail/comment/{page}/{id}",method=RequestMethod.GET)
 	public Comment detailComment(@PathVariable("id")Long id,Page page){
 		return null;
@@ -143,7 +141,6 @@ public class ApiController {
 	 * @throws JsonMappingException 
 	 * @throws JsonParseException 
 	 */
-	@ResponseBody
 	@RequestMapping(value="/submitComment",method=RequestMethod.POST)
 	public Map<String,Object> submitComment() {
 		Map<String,Object> result=new HashMap<String,Object>();
@@ -158,27 +155,11 @@ public class ApiController {
 	 * @throws JsonMappingException 
 	 * @throws JsonParseException 
 	 */
-	@ResponseBody
 	@RequestMapping(value="/orderlist/{username}",method=RequestMethod.GET)
 	public Orders orderlist() throws JsonParseException, JsonMappingException, IOException{
 		ObjectMapper mapper=new ObjectMapper();
 		String s="";
 		return mapper.readValue(s, new TypeReference <Orders>(){});
-	}
-	
-	/**
-	 * 购买
-	 * @throws IOException 
-	 * @throws JsonMappingException 
-	 * @throws JsonParseException 
-	 */
-	@ResponseBody
-	@RequestMapping(value="/order",method=RequestMethod.POST)
-	public Map<String,Object> order() {
-		Map<String,Object> result=new HashMap<String,Object>();
-		result.put("errno", 0);
-		result.put("msg", "buy ok");
-		return result;
 	}
 	
 	
@@ -235,5 +216,26 @@ public class ApiController {
 		
 		return dto;
 		
+	}
+	
+	/**
+	 * 买单
+	 */
+	@RequestMapping(value="/order",method=RequestMethod.POST)
+	public ApiCodeDto order(OrderForBuyDto orderForBuyDto) {
+		//1、校验token是否有效(缓存中是否存在这样一个token,并且对应存放的会员信息(这里指手机号)与提交上来的信息一致)
+		Long phone = memberService.getPhone(orderForBuyDto.getToken());
+		if(phone!=null && phone.equals(orderForBuyDto.getUsername())) {
+		//2、根据手机号获取会员主键
+			Long memberId = memberService.getIdByPhone(phone);
+		//3、保存订单
+			OrdersDto ordersDto = new OrdersDto();
+			ordersDto.setNum(orderForBuyDto.getNum());
+			ordersDto.setPrice(orderForBuyDto.getPrice());
+			ordersDto.setBusinessId(orderForBuyDto.getId());
+			ordersDto.setMemberId(memberId);
+			
+		}
+		return null;
 	}
 }

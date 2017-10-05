@@ -30,4 +30,11 @@ public interface MemberService {
 	 * 保存手机号和token到缓存中
 	 */
 	void saveToken(String token,Long phone);
+	
+	Long getPhone(String oken);
+	
+	/**
+	 * 根据手机号获取会员主键
+	 */
+	Long getIdByPhone(Long phone);
 }
