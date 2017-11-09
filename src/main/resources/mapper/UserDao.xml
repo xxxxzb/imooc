@@ -19,6 +19,7 @@
 		order by convert (ch_name using gbk) 
 	</select>
 	
+	
 	<insert id="insert">
 		insert into sys_user(name,ch_name,`password`)
 		select #{name},#{chName},#{password} from dual

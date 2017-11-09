@@ -2,25 +2,24 @@ package org.imooc.controller.system;
 
 import java.util.List;
 
-import org.imooc.dto.MenuDto;
-import org.imooc.dto.MenuForZtreeDto;
-import org.imooc.service.content.MenuService;
+import org.imooc.dto.GroupDto;
+import org.imooc.service.content.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 菜单相关
+ * 用户组相关
  */
 @RestController
-@RequestMapping("/menus")
-public class MenusController {
+@RequestMapping("/groups")
+public class GroupController {
 	
 	@Autowired
-	private MenuService menuService;
+	private GroupService groupService;
 	
 	@RequestMapping()
-	public List<MenuForZtreeDto> getList(){
-		return menuService.getZtreeList();
+	public List<GroupDto> getList(){
+		return groupService.getList();
 	}
 }

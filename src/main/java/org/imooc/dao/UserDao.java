@@ -19,4 +19,9 @@ public interface UserDao {
 	 * @return 影响行数:0,用户已存在;1,新增成功
 	 */
 	int insert(User user);
+	
+	/**
+	 * 更新
+	 */
+	boolean update(User user);
 }

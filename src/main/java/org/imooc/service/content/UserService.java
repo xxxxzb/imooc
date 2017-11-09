@@ -1,5 +1,7 @@
 package org.imooc.service.content;
 
+import java.util.List;
+
 import org.imooc.dto.UserDto;
 
 public interface UserService {
@@ -9,6 +11,7 @@ public interface UserService {
 	boolean validate(UserDto userDto);
 	
 	/**
-	 * 
+	 * 获取用户列表
 	 */
+	List<UserDto> getList();
 }
